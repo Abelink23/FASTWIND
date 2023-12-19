@@ -1,0 +1,2 @@
+main=/path/to/this/package/
+input=/path/to/this/package/INPUT/
