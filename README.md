@@ -1,4 +1,4 @@
-# Introduction to python module: FASWIND
+# Introduction to python module: FASTWIND
 
 This python package is being developed to facilitate the use of the NLTE model atmosphere and line synthesis FASTWIND code. FASTWIND stands for Fast Analysis of STellar atmospheres with WINDs.
 
