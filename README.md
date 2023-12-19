@@ -13,8 +13,6 @@ The FASTWIND code has been described in the following papers:
 
 ## Installation
 
-// Instructions for installing the package:
-
 This package depends on another github repository named `LHS-MDU` which can be found [here](https://github.com/sahilm89/lhsmdu).
 
 Additionally, the package depends on the following python packages:
@@ -30,5 +28,5 @@ Additionally, the package depends on the following python packages:
 
 ## Acknowledgments:
 
-Marta Lorenzo for helping in the development of the package.
-Joachim Puls for developing the FASTWIND code.
+Marta Lorenzo (CAB Torrejón) for helping in the development of the package.
+Joachim Puls (LMU München) for developing the FASTWIND code.
