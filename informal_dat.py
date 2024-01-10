@@ -93,11 +93,16 @@ def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro
         if extra_elem != False and len(model_name) <= 27:
             model_name = model_name + extra_elem_name + '{:03}'.format(int(round(extra_elem*100)))
 
-    Mdot, R_rsun, v_inf = get_Mdot_R_vinf_Miguel(teff, lgf, logg, logq)
+    # Check that the model does not exist already:
+    while check_model_exist(model_name, dir+'INDAT/'):
+        model_name = input('Please, enter a new name for the model: ')
+
+    # Calculate Mdot, R, v_inf:
+    Mdot, R_rsun, v_inf = get_Mdot_R_vinf_Miguel(teff, logg, logq, prescription='Urbaneja2023', z=z, yhe=he)
 
     #Create INDAT.DAT file
     f = open(dir + 'INDAT/' + model_name + '_indat.dat', "w")
-    f.write('\'' + model_name + '\'' + '\n') # name of the model
+    f.write(model_name + '\n') # name of the model
     f.write(' T T           0         100' + '\n') # <True> <True> <Calculate model from 0> <max. number of iterations for convergence>
     f.write('  0.000000000000000E+000' + '\n')  # Internal FASTWIND parameter
     f.write('  ' + str(int(round(teff))) + '        ' + "{:,.2f}".format(logg) + '        ' + "{:,.2f}".format(R_rsun) + '\n')  # teff + logg + R (at tau=2/3)
@@ -160,3 +165,31 @@ def write_formal(dir, model_name, micro, escattering=1):
     f.write('{:01}'.format(escattering))  # micro
     f.close()
 
+
+def check_model_exist(model_name, path):
+    '''
+    Check that there is no model repeated in a folder.
+
+    Parameters
+    ----------
+    model_name : str
+        Name of the model.
+
+    path : str
+        Path to the directory where the model is searched.
+
+    Returns
+    -------
+    True if the model is already in the grid, False otherwise.
+    '''
+    
+    if not path.endswith('/'):
+        path = path + '/'
+        
+    files = os.listdir(path)
+    if any(model_name in f for f in files):
+        print('Warning: %s is already in the grid.' % model_name)
+        return True
+    
+    else:
+        return False
