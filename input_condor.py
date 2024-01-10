@@ -88,6 +88,8 @@ def input_condor_lhs(grid, lhs_grid_name, file_atom, file_lines):
     # Calculate logg from lgf and teff:
     grid['logg'] = grid['lgf'] + 4 * np.log10(grid['teff'] / 10000)
 
+    # Create the CHAINFIL files:
+    model_names = []
     for i in range(len(slhs[0])):
 
         Mdot, R_rsun, v_inf = get_Mdot_R_vinf_Miguel(teff=grid['teff'][i],
@@ -123,21 +125,28 @@ def input_condor_lhs(grid, lhs_grid_name, file_atom, file_lines):
             if extra_elem != False and len(model_string) <= 27:
                 model_string = model_string + extra_elem + '{:03}'.format(int(round(grid[extra_elem][i]*100)))
 
+        # Check that the model does not exist already:
+        while model_string in model_names:
+            print('Warning: model %s already exists.' % model_string)
+            model_string = input('Please, enter a new name for the model: ')
+
+        model_names.append(model_string)
+
         # PRINTF,l1,lab,'   000 100', teff, grav, R, 10.^mdot, vinf, beta, yhe, micro, metal, '01.00 0.10 0.20'
         # FORMAT='(A30,A10,1X,I5,1X,F4.2,1X,A5,1X,E8.2,1X,F5.0,1X,F4.2,1X,F4.2,1X,A5,1X,F4.2,1X,A15)'
         # T400g420He10Q135b10CNOp000     000 100 40000 4.20 007.2 1.28E-07 3511. 1.00 0.10 009.9 1.00 01.00 0.10 0.20
         # Mdot = 10 ** logq * (R_rsun * v_inf) ** 1.5
-        model_string = model_string + '     000 100 ' + \
+        model_string = model_string + '   000 100 ' + \
                                       '{:05} '.format(int(round(grid['teff'][i]))) + \
-                                      '{:,.2f} '.format(grid['logg'][i]) + \
+                                      '{:4.2f} '.format(grid['logg'][i]) + \
                                       '{:05.1f} '.format(R_rsun) + \
-                                      '{:05.2E} '.format(Mdot) + \
-                                      '{:.0f}. '.format(v_inf) + \
-                                      '{:,.2f} '.format(grid['beta'][i]) + \
-                                      '{:,.2f} '.format(grid['he'][i]) + \
+                                      '{:1.2E} '.format(Mdot) + \
+                                      '{:4.0f}. '.format(v_inf) + \
+                                      '{:4.2f} '.format(grid['beta'][i]) + \
+                                      '{:4.2f} '.format(grid['he'][i]) + \
                                       '{:05.1f} '.format(grid['micro'][i]) + \
-                                       '{:,.2f} '.format(grid['z'][i]) + \
-                                      '01.00 0.10 0.20 \n'
+                                      '{:4.2f} '.format(grid['z'][i]) + \
+                                      '01.00 0.10 0.20\n'
 
         chainfil.write(model_string)
 
