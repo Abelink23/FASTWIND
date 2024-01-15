@@ -16,7 +16,7 @@ print('Stefan-Boltzmann constant =', sigma_sb.cgs.value, 'in', sigma_sb.cgs.unit
 print('Bolometric magnitude of the Sun =', 4.74)
 print('\n')
 
-def get_Mdot_R_vinf_Miguel(teff, logg, logq, prescription='Urbaneja2017', z=1.00, yhe=0.1):
+def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=1.00, yhe=0.1, sgs=True):
     """
     Calculate the radius of a star from its effective temperature, surface
     gravity, luminosity and mass loss rate.
@@ -34,7 +34,18 @@ def get_Mdot_R_vinf_Miguel(teff, logg, logq, prescription='Urbaneja2017', z=1.00
     
     prescription : str
         Prescription to calculate the radius of the star. Options are:
-        'Urbaneja2023' (default) and 'Urbaneja2027'.
+        'Urbaneja2017', 'Urbaneja' (default).
+    
+    z : float
+        Metallicity of the star. Default is 1.00.
+    
+    yhe : float
+        Helium abundance of the star. Default is 0.1.
+    
+    sgs : bool
+        If True, use the prescription for supergiants (default).
+        If False, use the prescription for non-supergiants.
+        Else, use the prescription from Kudritzki et al. 2008.
     
     Returns
     -------
@@ -50,7 +61,7 @@ def get_Mdot_R_vinf_Miguel(teff, logg, logq, prescription='Urbaneja2017', z=1.00
     
     # From: 'Nominal values for selected solar and planetary quantities: IAU 2015 resolution B3'
     Mbol_sun = 4.74 # Bolometric magnitude of the Sun (M.A.Urbaneja uses 4.75)
-    Teff_sun = 5772 # Effective temperature of the Sun in K
+    Teff_sun = 5772 # Effective temperature of the Sun in K (M.A.Urbaneja uses 5779.1389)
 
     # Calculate loggf from teff and logg:
     loggf = logg - 4 * np.log10(teff * 1e-4)
@@ -93,10 +104,17 @@ def get_Mdot_R_vinf_Miguel(teff, logg, logq, prescription='Urbaneja2017', z=1.00
         return Mdot, R_rsun, v_inf, v_esc
 
 
-    elif prescription == 'Urbaneja2023':
+    elif prescription == 'Urbaneja':
 
-        # Calculate Mbol from loggf from FGLR
-        Mbol = 3.41 * (loggf - 1.5) - 8.02
+        # Calculate Mbol from loggf from FGLR with different prescriptions:
+        if sgs == True and loggf >= 1.29:
+            Mbol = 3.33 * (loggf - 1.5) - 7.89
+        elif sgs == True and loggf < 1.29:
+            Mbol = 8.07 * (loggf - 1.29) + 3.33 * (1.29 - 1.5) - 7.89
+        elif sgs == False:
+            Mbol = 3.76 * (loggf - 3.0) - 2.98 # new non-evolved eFGLR
+        else:
+            Mbol = 3.41 * (loggf - 1.5) - 8.02 # Kudritzki et al. 2008
 
         # Calculate R:
         logLLsol = - 0.4 * (Mbol - Mbol_sun)
@@ -124,12 +142,9 @@ def get_Mdot_R_vinf_Miguel(teff, logg, logq, prescription='Urbaneja2017', z=1.00
         return Mdot, R_rsun, v_inf, v_esc
 
 
-def get_Mdot_R_vinf_Sergio():
-    '''
-    To be implemented:
-    
-    Check file: crea_chainfil_allgrid_hhex.pro
-    '''
-    return
-
-
+    elif prescription == 'Sergio':
+        
+        print('To be implemented')
+        print('Check file: crea_chainfil_allgrid_hhex.pro')
+        
+        return None, None, None, None
