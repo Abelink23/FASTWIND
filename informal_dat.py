@@ -98,7 +98,7 @@ def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro
         model_name = input('Please, enter a new name for the model: ')
 
     # Calculate Mdot, R, v_inf:
-    Mdot, R_rsun, v_inf = get_Mdot_R_vinf_Miguel(teff, logg, logq, prescription='Urbaneja2023', z=z, yhe=he)
+    Mdot, R_rsun, v_inf = get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=z, yhe=he, sgs=True)
 
     #Create INDAT.DAT file
     f = open(dir + 'INDAT/' + model_name + '_indat.dat', "w")
