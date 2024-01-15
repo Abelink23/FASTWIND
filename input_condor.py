@@ -92,10 +92,12 @@ def input_condor_lhs(grid, lhs_grid_name, file_atom, file_lines):
     model_names = []
     for i in range(len(slhs[0])):
 
-        Mdot, R_rsun, v_inf = get_Mdot_R_vinf_Miguel(teff=grid['teff'][i],
+        Mdot, R_rsun, v_inf = get_Mdot_R_vinf(teff=grid['teff'][i],
                                                 lgf=grid['lgf'][i],
                                                 logg=grid['logg'][i],
-                                                logq=grid['logq'][i])
+                                                logq=grid['logq'][i],
+                                                prescription='Urbaneja',
+                                                sgs=True)
 
         chainfil = open(main_dir + 'INPUT/%s/CONDOR_CHAINFIL/CHAINFIL_%i' % (grid_name, i+1), "w")
 
