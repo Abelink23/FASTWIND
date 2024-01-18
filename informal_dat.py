@@ -5,7 +5,7 @@ import numpy as np
 from init import *
 from get_wind_par import *
 
-def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro_fw, heion):
+def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro_fw, heion, prescription, sgs):
     '''
     Write the INDAT.DAT files for FASTWIND from a set of input parameters.
     
@@ -58,6 +58,9 @@ def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro
     heion : int
         Helium ionization stage. Default is 1.
     
+    prescription and sgs : str and bool
+        See get_Mdot_R_vinf() for more information.
+    
     Returns
     -------
     Nothing but the INDAT.DAT files is saved in the specified directory.
@@ -97,8 +100,8 @@ def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro
     while check_model_exist(model_name, dir+'INDAT/'):
         model_name = input('Please, enter a new name for the model: ')
 
-    # Calculate Mdot, R, v_inf:
-    Mdot, R_rsun, v_inf = get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=z, yhe=he, sgs=True)
+    # Calculate Mdot, R, v_inf and v_esc [not used] from the input parameters:
+    Mdot, R_rsun, v_inf, v_esc = get_Mdot_R_vinf(teff, logg, logq, prescription=prescription, sgs=sgs, z=z, yhe=he)
 
     #Create INDAT.DAT file
     f = open(dir + 'INDAT/' + model_name + '_indat.dat', "w")
