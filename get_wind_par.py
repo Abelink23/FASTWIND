@@ -16,7 +16,7 @@ print('Stefan-Boltzmann constant =', sigma_sb.cgs.value, 'in', sigma_sb.cgs.unit
 print('Bolometric magnitude of the Sun =', 4.74)
 print('\n')
 
-def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=1.00, yhe=0.1, sgs=True):
+def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', sgs=True, z=1.00, yhe=0.1):
     """
     Calculate the radius of a star from its effective temperature, surface
     gravity, luminosity and mass loss rate.
@@ -33,8 +33,15 @@ def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=1.00, yhe=0.1, 
         Logarithm of the wind-strength parameter.
     
     prescription : str
-        Prescription to calculate the radius of the star. Options are:
-        'Urbaneja2017', 'Urbaneja' (default).
+        Prescription to calculate the mass loss rate, radius,
+        terminal velocity and escape velocity of the star.
+        'Urbaneja' (default), 'Urbaneja2017' or 'Sergio'.
+    
+    sgs : bool, optional
+        [Only for prescription='Urbaneja']
+        If True, use the prescription for supergiants (default).
+        If False, use the prescription for non-supergiants.
+        Else, use the prescription from Kudritzki et al. 2008.
     
     z : float
         Metallicity of the star. Default is 1.00.
@@ -42,21 +49,19 @@ def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=1.00, yhe=0.1, 
     yhe : float
         Helium abundance of the star. Default is 0.1.
     
-    sgs : bool
-        If True, use the prescription for supergiants (default).
-        If False, use the prescription for non-supergiants.
-        Else, use the prescription from Kudritzki et al. 2008.
-    
     Returns
     -------
     Mdot : float
-        Mass loss rate of the star in ???
+        Mass loss rate of the star in solar masses per year.
     
     R : float
-        Radius of the star in ???
+        Radius of the star in solar radii.
     
     v_inf : float
-        Terminal velocity of the wind of the star in ???
+        Terminal velocity of the wind of the star in km/s.
+        
+    v_esc : float
+        Escape velocity of the star in km/s.
     """
     
     # From: 'Nominal values for selected solar and planetary quantities: IAU 2015 resolution B3'
@@ -107,6 +112,7 @@ def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=1.00, yhe=0.1, 
     elif prescription == 'Urbaneja':
 
         # Calculate Mbol from loggf from FGLR with different prescriptions:
+        # Kudritzki, Urbaneja & Rix, 2020, ApJ, 890, 28 
         if sgs == True and loggf >= 1.29:
             Mbol = 3.33 * (loggf - 1.5) - 7.89
         elif sgs == True and loggf < 1.29:
@@ -114,7 +120,8 @@ def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', z=1.00, yhe=0.1, 
         elif sgs == False:
             Mbol = 3.76 * (loggf - 3.0) - 2.98 # new non-evolved eFGLR
         else:
-            Mbol = 3.41 * (loggf - 1.5) - 8.02 # Kudritzki et al. 2008
+            # Kudritzki et al. 2008
+            Mbol = 3.41 * (loggf - 1.5) - 8.02
 
         # Calculate R:
         logLLsol = - 0.4 * (Mbol - Mbol_sun)
