@@ -79,7 +79,7 @@ def read_input_grid_lhs(file):
     return grid
 
 
-def run_hypercube(grid, n_models, make_input_files=True, show_kiel=False):
+def run_hypercube(grid, n_models, prescription, sgs, make_input_files=True, show_kiel=False):
     """
     Creates  for a given grid of input parameters.
 
@@ -92,6 +92,9 @@ def run_hypercube(grid, n_models, make_input_files=True, show_kiel=False):
 
     n_models : int
         The number of models to calculate in the hypercube.
+
+    prescription and sgs : str and bool
+        See get_Mdot_R_vinf() for more information.
 
     make_input_files : bool, optional
         Flag indicating whether to create input files for each model. 
@@ -202,7 +205,9 @@ def run_hypercube(grid, n_models, make_input_files=True, show_kiel=False):
                                      o=grid['o'][i],
                                      micro=grid['micro'][i],
                                      micro_fw=grid['micro_fw'][i],
-                                     heion=grid['heion'][i])
+                                     heion=grid['heion'][i],
+                                     prescription=prescription,
+                                     sgs=sgs)
 
             # Create the FORMAL_INPUT.dat file:
             write_formal(main_dir + 'INPUT/%s/' % grid_name,
