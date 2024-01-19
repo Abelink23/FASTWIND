@@ -6,7 +6,7 @@ from init import *
 from LHS import read_input_grid_lhs
 from get_wind_par import *
 
-def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescription, sgs):
+def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescription, sgs, e_scatter=1):
     '''
     Create the input files for Condor from an input Latin Hypercube Sampling grid.
     
@@ -32,6 +32,10 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
     
     prescription and sgs : str and bool
         See get_Mdot_R_vinf() for more information.
+    
+    e_scatter : int [0/1], optional
+        Enable or disable the electron scattering option. 
+        Default is enabled (e_scatter=1).
     
     Returns
     -------
@@ -157,7 +161,7 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
 
         chainfil.write(model_string)
 
-        chainfil.write('FORMAL 0 %s %i' % (formal, int(grid['micro'][i])) + '\n')
+        chainfil.write('FORMAL %i %s %i' % (e_scatter, formal, int(grid['micro'][i])) + '\n')
         chainfil.write('CLEAN' + '\n' + 'COMPRESS' + '\n' + 'END' + '\n' + '# -----------------------')
 
         chainfil.close()
