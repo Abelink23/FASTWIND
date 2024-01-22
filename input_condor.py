@@ -108,7 +108,7 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
                                                 prescription=prescription,
                                                 sgs=sgs)
 
-        chainfil = open(main_dir + 'INPUT/%s/CONDOR_CHAINFIL/CHAINFIL_%i' % (grid_name, i+1), "w")
+        chainfil = open(main_dir + 'INPUT/%s/CONDOR_CHAINFIL/CHAINFIL_%i' % (grid_name, i), "w")
 
         # Write the CHAINFIL file:
         chainfil.write('ATOM ' + model_atom + ' thom_new.dat ' + lines + '\n')
