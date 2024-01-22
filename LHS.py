@@ -67,8 +67,9 @@ def read_input_grid_lhs(file):
             return
         elif var not in grid.keys():
             if var == 'micro_fw':
-                print('Warning: micro_fw not defined in the input grid file, it will be set to 10.')
-                grid['micro_fw'] = 10
+                print('Warning: micro_fw not defined in the input grid file.')
+                print('Typical values are 10 for SGs and 5 for Gs.')
+                grid['micro_fw'] = int(input('Enter an integer value for micro_fw: '))
             elif var == 'heion':
                 print('Warning: heion not defined in the input grid file, it will be set to 1.')
                 grid['heion'] = 1
