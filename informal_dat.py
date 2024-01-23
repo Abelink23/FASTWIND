@@ -93,7 +93,7 @@ def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro
                 'he' + '{:03}'.format(int(round(he*100)))
 
     for extra_elem,extra_elem_name in zip([si, c, n, o, mg], ['si','c','n','o','mg']):
-        if extra_elem != False and len(model_name) <= 27:
+        if extra_elem != False and len(model_name) <= 32:
             model_name = model_name + extra_elem_name + '{:03}'.format(int(round(extra_elem*100)))
 
     # Check that the model does not exist already:
