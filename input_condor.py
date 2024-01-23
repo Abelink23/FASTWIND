@@ -133,7 +133,7 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
                       'he' + '{:03}'.format(int(round(grid['he'][i]*100)))
 
         for extra_elem in ['si','c','n','o','mg']:
-            if extra_elem != False and len(model_string) <= 27:
+            if extra_elem != False and len(model_string) <= 32:
                 model_string = model_string + extra_elem + '{:03}'.format(int(round(grid[extra_elem][i]*100)))
 
         # Check that the model does not exist already:
@@ -147,7 +147,7 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
         # FORMAT (what I use)            A35,     A12,   I5,F4.2, F5.1,    E8.2, F5.0,F4.2,F4.2, F5.1,F4.2,           A15)'
         # t15133g204q134b196x26he019si782     000 100 40000 4.20 007.2 1.28E-07 3511. 1.00 0.10 009.9 1.00 01.00 0.10 0.20
         # model_name                                   teff grav     R 10.^mdot  vinf beta  yhe micro metal   ??   ??   ??
-        model_string = model_string + '    000 100 ' + \
+        model_string = model_string + ' 000 100 ' + \
                                       '{:05} '.format(int(round(grid['teff'][i]))) + \
                                       '{:4.2f} '.format(grid['logg'][i]) + \
                                       '{:05.1f} '.format(R_rsun) + \
