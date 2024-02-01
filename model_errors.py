@@ -85,14 +85,9 @@ def plot_bad_models(path_list, y, x, path_chainfils=None):
     plt.savefig(path_list.replace('.txt','')+'_%s_%s.png' % (y, x), dpi=300, bbox_inches='tight')
 
 
-# function to find the chainfil for a given model that has failed
-# the name of the models are listed in a txt file (path_list)
-# the chainfils are in a directory (path_chainfils)
-# the name of the model is contained in the content of the chainfil
-# the program has to make a dictionaty with CHAINFIL_<n>: <model_name> where model name is in the fourth line of the chainfil
 def find_chainfil(path_list, path_chainfils):
     """
-    Function that finds the CHAINFIL names for a list of models that have failed.
+    Function that finds the CHAINFIL number for a list of models that have failed.
     
     Parameters
     ----------
