@@ -31,7 +31,7 @@ def read_input_grid_lhs(file):
     Dictionary with the grid parameters.
     """
 
-    names_all_parameters = ['teff','lgf','logq','beta','he','si','mg','c','n','o','z','micro','micro_fw','heion']
+    names_all_parameters = ['teff','lgf','logg','logq','beta','he','si','mg','c','n','o','z','micro','micro_fw','heion']
 
     grid = {}
     with open('LHS_grids/'+file, 'r') as file:
@@ -60,12 +60,18 @@ def read_input_grid_lhs(file):
         print('Error: grid_name not defined in the input grid file.')
         return
 
+    # Check that not both lgf and logg are defined:
+    if 'lgf' in grid.keys() and 'logg' in grid.keys():
+        print('Error: both lgf and logg are defined in the input grid file, please correct.')
+        return
+
     # Check if all the fundamental variables are defined:
     for var in names_all_parameters:
-        if var in ['teff','lgf','logq','beta','he','z','micro'] and not var in grid.keys():
+        if (var in ['teff','logq','beta','he','z','micro'] and not var in grid.keys()) or \
+            (var in ['lgf','logg'] and not ('lgf' in grid.keys() or 'logg' in grid.keys())):
             print('Error: %s not defined in the input grid file, please correct.' % var)
             return
-        elif var not in grid.keys():
+        elif var not in grid.keys() and var not in ['lgf','logg']:
             if var == 'micro_fw':
                 print('Warning: micro_fw not defined in the input grid file.')
                 print('Typical values are 10 for SGs and 5 for Gs.')
@@ -185,12 +191,16 @@ def run_hypercube(grid, n_models, prescription, sgs, make_input_files=True, show
             # Assign the array to the parameter:
             grid[param] = tmp_param
 
+        # Make the trick in case logg is defined instead of lgf (in informal_dat.py is de-converted):
+        if 'logg' in grid.keys():
+            grid['lgf'] = grid['logg'] - 4 * np.log10(grid['teff'] / 10000)
+            del grid['logg']
+
         f = open(main_dir + 'INPUT/%s/ModelList_%s.txt' % (grid_name, grid_name), "w")
         fj = open(main_dir + 'INPUT/%s/jobs.list_%s_1' % (grid_name, grid_name), "w")
 
+        bad_models = 0
         for i in range(n_models):
-            k = i + 1
-
             # Create the INDAT.dat file:
             model_name = write_indat(main_dir + 'INPUT/%s/' % grid_name,
                                      teff=grid['teff'][i],
@@ -210,16 +220,23 @@ def run_hypercube(grid, n_models, prescription, sgs, make_input_files=True, show
                                      prescription=prescription,
                                      sgs=sgs)
 
+            # If the model is not valid, skip the FORMAL_INPUT.dat file:
+            if model_name is None:
+                print('Skipping FORMAL_INPUT for model %s' % model_name)
+                bad_models += 1
+                continue
+
             # Create the FORMAL_INPUT.dat file:
             write_formal(main_dir + 'INPUT/%s/' % grid_name,
                          model_name,
                          grid['micro'][i],
-                         escattering=1)
+                         scattering=1)
 
             # Create list of model names:
             f.write(model_name + '\n')
             fj.write(model_name + '\n')
 
+            k = i + 1
             if k % 100 == 0:
                 fj.write('END')
                 fj.close()
@@ -233,5 +250,6 @@ def run_hypercube(grid, n_models, prescription, sgs, make_input_files=True, show
         f.close()
         
         print('Input files created.')
+        print('Number of bad models: %i/%i' % (bad_models, n_models))
         
         return None
