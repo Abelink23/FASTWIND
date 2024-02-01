@@ -132,7 +132,13 @@ def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', sgs=True, z=1.00,
         solar_metallicity = 0.02
         x = (1 - z * solar_metallicity) / (1 + 4 * yhe) # H mass fraction
         gamma = (sigma_sb.cgs.value / c.cgs.value) * 0.20 * (1 + x) * teff ** 4 / 10 ** logg
-        v_esc = np.sqrt(2 * 10 ** logg * (R_rsun * R_sun.cgs.value) * (1 - gamma)) * 1e-5
+        # print a warning if gamma > 1
+        if gamma > 1:
+            print('Warning: gamma > 1 for logg =', round(logg,3), 'and teff =', round(teff,1))
+            return None, None, None, None
+            
+        else:
+            v_esc = np.sqrt(2 * 10 ** logg * (R_rsun * R_sun.cgs.value) * (1 - gamma)) * 1e-5
 
         # Calculate terminal velocity (v_inf) using Achim's vinfty/vesc prescription:
         t = teff * 1e-4
