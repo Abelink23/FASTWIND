@@ -102,6 +102,9 @@ def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro
 
     # Calculate Mdot, R, v_inf and v_esc [not used] from the input parameters:
     Mdot, R_rsun, v_inf, v_esc = get_Mdot_R_vinf(teff, logg, logq, prescription=prescription, sgs=sgs, z=z, yhe=he)
+    if Mdot == None or R_rsun == None or v_inf == None or v_esc == None:
+        print('Skipping INDAT for model %s' % model_name)
+        return None
 
     #Create INDAT.DAT file
     f = open(dir + 'INDAT/' + model_name + '_indat.dat', "w")
@@ -131,7 +134,7 @@ def write_indat(dir, teff, lgf, logq, beta, he, c, n, o, si, mg, z, micro, micro
     return model_name
 
 
-def write_formal(dir, model_name, micro, escattering=1):
+def write_formal(dir, model_name, micro, scattering=1):
     '''
     Write the FORMAL.DAT files for FASTWIND from a set of input parameters.
 
@@ -146,7 +149,7 @@ def write_formal(dir, model_name, micro, escattering=1):
     micro : float
         Microturbulent velocity.
 
-    escattering : int
+    scattering : int
         Flag to include electron scattering. Default is 1.
 
     Returns
@@ -165,7 +168,7 @@ def write_formal(dir, model_name, micro, escattering=1):
     f = open(dir + 'FORMAL/' + model_name + '_formal.dat', "w")
     f.write(model_name + '\n') # name
     f.write("{:,.2f}".format(micro) + '\n') # micro
-    f.write('{:01}'.format(escattering))  # micro
+    f.write('{:01}'.format(scattering))  # micro
     f.close()
 
 
