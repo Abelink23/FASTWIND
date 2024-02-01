@@ -76,6 +76,7 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
 
     print('Condor files will be saved inside INPUT/%s/CONDOR_CHAINFIL/ folder.\n' % grid_name)
 
+
     # Find names of variables in the grid with a range:
     name_ranges = [key for key in grid.keys() if isinstance(grid[key], tuple) and len(grid[key]) == 2]
 
@@ -96,10 +97,11 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
         grid[param] = tmp_param
 
     # Calculate logg from lgf and teff:
-    grid['logg'] = grid['lgf'] + 4 * np.log10(grid['teff'] / 10000)
+    if not 'logg' in grid.keys():
+        grid['logg'] = grid['lgf'] + 4 * np.log10(grid['teff'] / 10000)
 
     # Create the CHAINFIL files:
-    model_names = []
+    model_names = []; bad_models = 0
     for i in range(len(slhs[0])):
 
         Mdot, R_rsun, v_inf, v_esc = get_Mdot_R_vinf(teff=grid['teff'][i],
@@ -107,6 +109,10 @@ def input_condor_lhs(grid, lhs_grid_name, model_atom, lines, formal, prescriptio
                                                 logq=grid['logq'][i],
                                                 prescription=prescription,
                                                 sgs=sgs)
+
+        if Mdot == None or R_rsun == None or v_inf == None or v_esc == None:
+            print('Skipping CHAINFIL...')
+            continue
 
         chainfil = open(main_dir + 'INPUT/%s/CONDOR_CHAINFIL/CHAINFIL_%i' % (grid_name, i), "w")
 
