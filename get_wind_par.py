@@ -16,7 +16,7 @@ print('Stefan-Boltzmann constant =', sigma_sb.cgs.value, 'in', sigma_sb.cgs.unit
 print('Bolometric magnitude of the Sun =', 4.74)
 print('\n')
 
-def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', sgs=True, z=1.00, yhe=0.1):
+def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', sgs=True, z=1.00, yhe=0.1, out_gamma=False):
     """
     Calculate the radius of a star from its effective temperature, surface
     gravity, luminosity and mass loss rate.
@@ -48,6 +48,10 @@ def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', sgs=True, z=1.00,
     
     yhe : float
         Helium abundance of the star. Default is 0.1.
+    
+    out_gamma : bool, optional
+        If True, return the gamma parameter. Only for prescription='Urbaneja'.
+        Default is False.
     
     Returns
     -------
@@ -152,7 +156,10 @@ def get_Mdot_R_vinf(teff, logg, logq, prescription='Urbaneja', sgs=True, z=1.00,
         # Q = Mdot/(R*vinf)**1.5
         Mdot = 10 ** logq * (R_rsun * v_inf) ** 1.5
 
-        return Mdot, R_rsun, v_inf, v_esc
+        if out_gamma == True:
+            return Mdot, R_rsun, v_inf, v_esc, gamma
+        else:
+            return Mdot, R_rsun, v_inf, v_esc
 
 
     elif prescription == 'Sergio':
